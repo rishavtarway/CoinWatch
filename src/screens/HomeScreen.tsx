@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, TextInput, TouchableOpacity, RefreshControl, ActivityIndicator
+  View, Text, StyleSheet, TextInput, TouchableOpacity, RefreshControl, ActivityIndicator, FlatList
 } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
 import { useCryptoStore } from '../store/cryptoStore';
 import { CryptoCard } from '../components/CryptoCard';
 import { Crypto } from '../types';
@@ -123,11 +122,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <FlashList
+      <FlatList
         data={displayCoins}
         renderItem={renderItem}
         keyExtractor={item => item.id}
-        estimatedItemSize={70}
         ListHeaderComponent={renderHeader}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#1E3A5F']} />

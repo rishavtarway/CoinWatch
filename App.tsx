@@ -1,80 +1,64 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-
+import { View, Text, StyleSheet, StatusBar } from 'react-native';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { WatchlistScreen } from './src/screens/WatchlistScreen';
 import { PortfolioScreen } from './src/screens/PortfolioScreen';
 import { CoinDetailScreen } from './src/screens/CoinDetailScreen';
-import { AuthScreen } from './src/screens/AuthScreen';
-import { supabase } from './src/services/supabase';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-const TabIcon = ({ emoji, focused }: { emoji: string; focused: boolean }) => (
-  <View style={styles.tabIconContainer}>
-    <Text style={[styles.tabIcon, focused && styles.tabIconFocused]}>{emoji}</Text>
+const COLORS = {
+  dark: '#191c1f',
+  white: '#ffffff',
+  surface: '#f4f4f4',
+  blue: '#494fdf',
+  teal: '#00a87e',
+  danger: '#e23b4a',
+  warning: '#ec7e00',
+  midSlate: '#505a63',
+  coolGray: '#8d969e',
+};
+
+const TabIcon = ({ icon, focused }: { icon: string; focused: boolean }) => (
+  <View style={[styles.tabIconContainer, focused && styles.tabIconFocused]}>
+    <Text style={[styles.tabIcon, focused && styles.tabIconFocusedText]}>{icon}</Text>
   </View>
 );
 
 const HomeStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="HomeMain" component={HomeScreen} />
-    <Stack.Screen name="CoinDetail" component={CoinDetailScreen} options={{ headerShown: true, title: 'Coin Details', headerStyle: { backgroundColor: '#1E3A5F' }, headerTintColor: '#FFFFFF' }} />
+    <Stack.Screen name="CoinDetail" component={CoinDetailScreen} options={{ headerShown: true, title: 'Coin Details', headerStyle: { backgroundColor: COLORS.dark }, headerTintColor: COLORS.white, headerTitleStyle: { fontWeight: '500' } }} />
   </Stack.Navigator>
 );
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setIsAuthenticated(!!user);
-    setLoading(false);
-  };
-
-  const handleAuthSuccess = () => {
-    setIsAuthenticated(true);
-  };
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#1E3A5F" />
-      </View>
-    );
-  }
-
   return (
-    <NavigationContainer>
-      {isAuthenticated ? (
-        <Tab.Navigator screenOptions={{ headerShown: false, tabBarStyle: styles.tabBar, tabBarActiveTintColor: '#1E3A5F', tabBarInactiveTintColor: '#999999', tabBarLabelStyle: styles.tabLabel }}>
-          <Tab.Screen name="Market" component={HomeStack} options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="📊" focused={focused} /> }} />
-          <Tab.Screen name="Portfolio" component={PortfolioScreen} options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="💼" focused={focused} /> }} />
-          <Tab.Screen name="Watchlist" component={WatchlistScreen} options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="⭐" focused={focused} /> }} />
+    <View style={styles.appContainer}>
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.dark} />
+      <NavigationContainer>
+        <Tab.Navigator screenOptions={{ headerShown: false, tabBarStyle: styles.tabBar, tabBarActiveTintColor: COLORS.dark, tabBarInactiveTintColor: COLORS.coolGray, tabBarLabelStyle: styles.tabLabel }}>
+          <Tab.Screen name="Market" component={HomeStack} options={{ tabBarIcon: ({ focused }) => <TabIcon icon="M" focused={focused} /> }} />
+          <Tab.Screen name="Portfolio" component={PortfolioScreen} options={{ tabBarIcon: ({ focused }) => <TabIcon icon="P" focused={focused} /> }} />
+          <Tab.Screen name="Watchlist" component={WatchlistScreen} options={{ tabBarIcon: ({ focused }) => <TabIcon icon="W" focused={focused} /> }} />
         </Tab.Navigator>
-      ) : (
-        <AuthScreen onAuthSuccess={handleAuthSuccess} />
-      )}
-    </NavigationContainer>
+      </NavigationContainer>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F7FA' },
-  tabBar: { backgroundColor: '#FFFFFF', borderTopWidth: 0, elevation: 10, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 12, height: 85, paddingTop: 8, paddingBottom: 25 },
-  tabLabel: { fontSize: 12, fontWeight: '600' },
-  tabIconContainer: { alignItems: 'center', justifyContent: 'center' },
-  tabIcon: { fontSize: 24, opacity: 0.6 },
-  tabIconFocused: { opacity: 1 },
+  appContainer: { flex: 1, backgroundColor: COLORS.dark },
+  tabBar: { backgroundColor: COLORS.white, borderTopWidth: 0, height: 85, paddingTop: 8, paddingBottom: 28 },
+  tabLabel: { fontSize: 11, fontWeight: '500' },
+  tabIconContainer: { width: 36, height: 36, borderRadius: 9999, backgroundColor: COLORS.surface, alignItems: 'center', justifyContent: 'center' },
+  tabIconFocused: { backgroundColor: COLORS.dark },
+  tabIcon: { fontSize: 14, fontWeight: '600', color: COLORS.coolGray },
+  tabIconFocusedText: { color: COLORS.white },
 });
 
 export default App;

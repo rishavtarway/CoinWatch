@@ -1,9 +1,10 @@
-export const formatCurrency = (value: number, currency: string = 'usd'): string => {
+export const formatCurrency = (value: number | null | undefined, currency: string = 'usd'): string => {
   const symbols: { [key: string]: string } = {
     usd: '$', eur: '€', gbp: '£', jpy: '¥', inr: '₹'
   };
   const symbol = symbols[currency] || '$';
   
+  if (value == null || isNaN(value)) return `${symbol}--`;
   if (value >= 1e12) return `${symbol}${(value / 1e12).toFixed(2)}T`;
   if (value >= 1e9) return `${symbol}${(value / 1e9).toFixed(2)}B`;
   if (value >= 1e6) return `${symbol}${(value / 1e6).toFixed(2)}M`;
@@ -12,12 +13,14 @@ export const formatCurrency = (value: number, currency: string = 'usd'): string 
   return `${symbol}${value.toFixed(6)}`;
 };
 
-export const formatPercentage = (value: number): string => {
+export const formatPercentage = (value: number | null | undefined): string => {
+  if (value == null || isNaN(value)) return '--';
   const sign = value >= 0 ? '+' : '';
   return `${sign}${value.toFixed(2)}%`;
 };
 
-export const getCoinColor = (change: number): string => {
+export const getCoinColor = (change: number | null | undefined): string => {
+  if (change == null || isNaN(change)) return '#9E9E9E';
   if (change > 0) return '#00C853';
   if (change < 0) return '#FF5252';
   return '#9E9E9E';
@@ -50,6 +53,7 @@ export const timeAgo = (dateString: string): string => {
   return 'Just now';
 };
 
-export const formatNumber = (value: number): string => {
+export const formatNumber = (value: number | null | undefined): string => {
+  if (value == null || isNaN(value)) return '--';
   return value.toLocaleString('en-US', { maximumFractionDigits: 2 });
 };
