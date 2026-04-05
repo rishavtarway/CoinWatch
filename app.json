@@ -27,7 +27,20 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-local-notification"
-    ]
+      "expo-local-notification",
+      [
+        "expo-auth-session",
+        {
+          "google": {
+            "clientId": "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "coinwatch-app"
+      }
+    }
   }
 }
